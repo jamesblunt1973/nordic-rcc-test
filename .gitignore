@@ -1,2 +1,5 @@
 .vs/*
-obj/*
+WordCounter/obj/*
+WordCounter/bin/*
+WordCounter.Test/obj/*
+WordCounter.Test/bin/*
