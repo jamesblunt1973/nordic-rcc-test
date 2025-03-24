@@ -33,48 +33,34 @@
 	1. Use built in options `RemoveEmptyEntries` and `OrdinalIgnoreCase` instead of `Trim` and `ToLowerCase` call.
 	1. Use `Parallel` and `AsParallel` to utilize multi thrad parallel processing.
 	1. Use `ForEachAsync` to utilize synchronous programming and avoid blocking I/O.
+	1. Batching: Instead of processing every word individually and updating the output dictionary frequently [which could cause contention](https://benbowen.blog/post/cmmics_ii/),
+	we can group words into batches and process each batch as a single unit.
+	The following table show the improvement in process time:
+	![Batch Performance](WordCounter/Data/batch_performance.png)
+	*Finding the optimal batch size is critical.
 + Optimization
 	1. Avoid loading entire files into memory at once.
 	1. Use `StreamReader` to process line by line instead of `File.OpenText`.
+	1. Batching in line proccessing reduces the overhead for long lines.
 
 #### Used packages:
-+ `System.Linq.Async` to use `ToListAsync` from `QueryableExtensions` class.
++ `System.Linq.Async` to use `ToListAsync` and `ToAsyncEnumerable` from `QueryableExtensions` class.
 + `FluentAssertion`
 + `NSubstitute` to mock `StreamReader` service
 
 ### Further improvements:
-+ Async StreamReader:
-
-Instead of calling `ReadLineAsync()` in a loop, we can leverage `await foreach` with an `IAsyncEnumerable<string>` in the consumer method for even better performance and responsiveness.
 
 + Improved Exception Handling:
 
-Currently, the exceptions are caught and logged to the console. We could implement a centralized logging mechanism or allow the calling code to handle the exception.
+	1. Implement Result Pattern (debatable!) for FileReader Class.
+	1. Using Serilog or AWS CloudWatch for better logging mechanisem.
 
-Returning an empty enumerable might mask errors. Consider using a **custom result object** to communicate failures.
++ Dependency Injection for Separators: We can use **Option Pattern** for more flexible list of separators.
 
-+ Dependency Injection for Separators:
++ Get the list of text files from input or args
 
-The separators are currently hard-coded in the WordCounter class. It might be more flexible to inject them via configuration.
++ Parallelization for word counting: it didn't improve the process time in this case but in general it helps with utilizing multi-core processing.
 
-+ Improving Performance with Batching:
++ Configurable Output Formatting.
 
-Instead of processing lines one by one, we could batch process lines to reduce the overhead of individual line processing.
-
-+ Better Parallelization:
-
-Instead of parallelizing file reading only, we could also parallelize word counting within each file.
-
-This would take better advantage of multi-core systems.
-
-+ Sorting Optimization:
-
-The final sorting of results using .OrderBy(a => a.Value) could be optimized. Using a min-heap or priority queue might be more efficient for large datasets.
-
-+ Separation of Concerns:
-
-Consider separating file reading, word counting, and result aggregation into distinct services. This would make the code more modular and testable.
-
-+ Configurable Output Formatting:
-
-Instead of directly printing to the console, consider using an IOutputWriter interface to make output formatting and destination more flexible.
++ Sorting Optimization for final result using a **min-heap** or **priority-queue** when top N items is needed.

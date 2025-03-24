@@ -10,16 +10,16 @@ public class FileReaderTest
 	public async Task Given_TextFile_When_ReadLinesAsync_Then_Content_Is_Valid()
 	{
 		// Arrange
-		var fileContent = new List<string>
-		{
+		List<string?> fileContent =
+		[
 			"Line 1",
 			"Line 2",
 			"Line 3"
-		};
+		];
 
 		// Mock StreamReader
 		var streamReader = Substitute.For<IStreamReader>();
-		streamReader.ReadLineAsync().Returns(fileContent[0], fileContent[1], fileContent[2], null);
+		streamReader.ReadLineAsync().Returns(fileContent.ToAsyncEnumerable());
 
 		var fileReader = new FileReader(_ => streamReader);
 

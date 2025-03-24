@@ -13,9 +13,8 @@ public class FileReader(Func<string, IStreamReader> streamReaderFactory) : IFile
 		List<string?> lines = [];
 		try
 		{
-			while (true)
+			await foreach (var line in streamReader.ReadLineAsync())
 			{
-				var line = await streamReader.ReadLineAsync();
 				if (line == null)
 					break;
 				lines.Add(line);

@@ -2,11 +2,13 @@
 {
 	public class WordCounterTest
 	{
+		private readonly char[] separators = [' ', ',', '.', ':', ';'];
+
 		[Fact]
 		public void Given_WordCounter_When_CountWords_Then_Count_Occurrences()
 		{
 			// Arrange
-			var wordCounter = new WordCounter([' ', ',', '.', ':', ';']);
+			var wordCounter = new WordCounter(separators);
 			var lines = new List<string>
 			{
 				"apple, banana apple",
@@ -26,7 +28,7 @@
 		public void Given_WordCounter_When_CountWords_Then_Should_Ignore_Case()
 		{
 			// Arrange
-			var wordCounter = new WordCounter([' ', ',', '.', ':', ';']);
+			var wordCounter = new WordCounter(separators);
 			var lines = new List<string>
 			{
 				"Apple apple",
@@ -45,7 +47,7 @@
 		public void Given_WordCounter_When_CountWords_Then_Should_Trim_White_Space()
 		{
 			// Arrange
-			var wordCounter = new WordCounter([' ', ',', '.', ':', ';']);
+			var wordCounter = new WordCounter(separators);
 			var lines = new List<string>
 			{
 				"   apple   , banana  ,   apple    ....",

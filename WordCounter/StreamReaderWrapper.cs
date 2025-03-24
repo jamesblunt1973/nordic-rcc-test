@@ -2,16 +2,23 @@
 
 public interface IStreamReader: IDisposable
 {
-	Task<string?> ReadLineAsync();
+	IAsyncEnumerable<string?> ReadLineAsync();
 }
 
 public class StreamReaderWrapper(string filePath) : IStreamReader
 {
 	private readonly StreamReader _streamReader = new(filePath);
 
-	public async Task<string?> ReadLineAsync()
+	public async IAsyncEnumerable<string?> ReadLineAsync()
 	{
-		return await _streamReader.ReadLineAsync();
+		while (true)
+		{
+			var line = await _streamReader.ReadLineAsync();
+			if (line == null)
+				yield break;
+
+			yield return line;
+		}
 	}
 
 	public void Dispose()
